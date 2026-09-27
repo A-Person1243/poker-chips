@@ -1,4 +1,4 @@
-# Pocket Chips
+# Pocker Chips
 
 A mobile-friendly shared poker chip and action tracker for in-person home games. One person creates a table, friends join with a six-character room code or invite link, and everyone sees stacks, turns, bets, pots, folds, all-ins, and payouts update in real time.
 

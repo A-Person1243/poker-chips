@@ -1,4 +1,4 @@
-# Pocker Chips
+# Poker Chips
 
 A mobile-friendly shared poker chip and action tracker for in-person home games. One person creates a table, friends join with a six-character room code or invite link, and everyone sees stacks, turns, bets, pots, folds, all-ins, and payouts update in real time.
 
@@ -32,7 +32,7 @@ At the beginning of each betting round, there is no forced first actor in the ap
 
 After a bet or full raise, every other eligible player must respond before the round ends. Calls, folds, checks, and all-ins are handled according to the current bet and the player's remaining stack. The host can then select **Next betting round** to reset only the round-level betting amounts while preserving total hand contributions for side-pot calculations.
 
-The app intentionally does not deal cards, determine hand strength, or enforce dealer/blind positions. You still play poker at the table; Pocker Chips manages chips and action state.
+The app intentionally does not deal cards, determine hand strength, or enforce dealer/blind positions. You still play poker at the table; Poker Chips manages chips and action state.
 
 ## Main pots, side pots, and split pots
 

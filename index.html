@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="description" content="A lightweight shared poker chip and action tracker for home games." />
+  <title>Pocket Chips</title>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Pocket Chips home">
+        <span class="brand-chip">●</span>
+        <span>Pocket Chips</span>
+      </a>
+      <span id="connection-pill" class="pill subtle">Connecting…</span>
+    </header>
+
+    <section id="setup-warning" class="card warning hidden">
+      <h2>Firebase setup needed</h2>
+      <p>Open <code>firebase-config.js</code>, paste your Firebase web config, then enable Anonymous Authentication and Realtime Database.</p>
+      <p>The README has the exact setup steps.</p>
+    </section>
+
+    <section id="home-view" class="view">
+      <div class="hero">
+        <p class="eyebrow">HOME GAME CHIP TRACKER</p>
+        <h1>Run the chips from everyone’s phone.</h1>
+        <p class="lede">Create a table, send the room code, then track turn order, legal actions, all-ins, main pots, side pots, and chip stacks in real time.</p>
+      </div>
+
+      <div class="home-grid">
+        <form id="create-form" class="card form-card">
+          <div>
+            <p class="eyebrow">HOST</p>
+            <h2>Create a table</h2>
+          </div>
+          <label>
+            Your name
+            <input id="create-name" maxlength="24" autocomplete="nickname" placeholder="Adi" required />
+          </label>
+          <label>
+            Starting stack
+            <input id="starting-stack" type="number" min="1" max="100000000" step="1" value="1000" required />
+          </label>
+          <button class="button primary" type="submit">Create table</button>
+        </form>
+
+        <form id="join-form" class="card form-card">
+          <div>
+            <p class="eyebrow">PLAYER</p>
+            <h2>Join a table</h2>
+          </div>
+          <label>
+            Your name
+            <input id="join-name" maxlength="24" autocomplete="nickname" placeholder="Player name" required />
+          </label>
+          <label>
+            Room code
+            <input id="join-code" maxlength="6" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="A7K9Q2" required />
+          </label>
+          <button class="button secondary" type="submit">Join table</button>
+        </form>
+      </div>
+
+      <p class="fine-print">Built for casual in-person games. This is a trust-based chip tracker, not a secure wagering or payment system.</p>
+    </section>
+
+    <section id="room-view" class="view hidden">
+      <div class="room-heading">
+        <div>
+          <p class="eyebrow">TABLE <button id="copy-room" class="link-button" type="button" title="Copy invite link"><span id="room-code">------</span> ⧉</button></p>
+          <h1 id="room-title">Game night</h1>
+        </div>
+        <button id="leave-room" class="button ghost small" type="button">Leave</button>
+      </div>
+
+      <div class="score-grid">
+        <section class="card pot-card">
+          <p class="eyebrow">POT</p>
+          <div id="pot-value" class="big-number">0</div>
+          <p id="hand-label" class="muted">Hand 1</p>
+        </section>
+
+        <section class="card stack-card">
+          <p class="eyebrow">YOUR STACK</p>
+          <div id="my-balance" class="big-number">0</div>
+          <p id="my-name-label" class="muted">—</p>
+        </section>
+      </div>
+
+      <section class="card action-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">YOUR ACTION</p>
+            <h2 id="turn-heading">Waiting for action</h2>
+          </div>
+          <span id="turn-pill" class="pill">—</span>
+        </div>
+        <p id="action-note" class="action-note">The first player to act starts the turn cycle.</p>
+
+        <div class="poker-actions">
+          <button id="action-check" class="button secondary" type="button">Check</button>
+          <button id="action-call" class="button secondary" type="button">Call</button>
+          <button id="action-fold" class="button ghost" type="button">Fold</button>
+          <button id="action-all-in" class="button danger" type="button">All in</button>
+        </div>
+
+        <div class="raise-row">
+          <label class="raise-field">
+            <span id="raise-label">Bet amount</span>
+            <input id="raise-target" type="number" min="1" step="1" inputmode="numeric" placeholder="Amount" />
+          </label>
+          <button id="action-raise" class="button primary" type="button">Bet</button>
+        </div>
+      </section>
+
+      <section class="card donate-card">
+        <div class="section-heading compact-heading">
+          <div>
+            <p class="eyebrow">CHIP TRANSFER</p>
+            <h2>Donate chips</h2>
+          </div>
+        </div>
+        <div class="donate-row">
+          <select id="donate-player" aria-label="Donate chips to"></select>
+          <input id="donate-amount" type="number" min="1" step="1" inputmode="numeric" placeholder="Amount" aria-label="Donation amount" />
+          <button id="donate-button" class="button secondary" type="button">Donate</button>
+        </div>
+        <p class="microcopy">Moves chips directly from your stack to another player. It does not go into the pot. Available before action starts or after a hand is settled.</p>
+      </section>
+
+      <section class="card players-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PLAYERS</p>
+            <h2>Stacks & hand status</h2>
+          </div>
+          <span id="player-count" class="pill">0 players</span>
+        </div>
+        <div id="players-list" class="players-list"></div>
+      </section>
+
+      <section id="host-panel" class="card host-card hidden">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">HOST CONTROLS</p>
+            <h2>Manage the table</h2>
+          </div>
+          <span class="pill accent">Host</span>
+        </div>
+
+        <div class="host-section">
+          <div class="subheading-row">
+            <div>
+              <h3>Turn order</h3>
+              <p class="microcopy">Move players into table order. Once somebody acts, turns advance through this order automatically.</p>
+            </div>
+          </div>
+          <div id="turn-order-list" class="turn-order-list"></div>
+        </div>
+
+        <div class="host-section">
+          <h3>Stack adjustment</h3>
+          <div class="host-grid">
+            <label>
+              Player
+              <select id="host-player"></select>
+            </label>
+            <label>
+              Amount
+              <input id="host-amount" type="number" min="1" step="1" inputmode="numeric" value="100" />
+            </label>
+          </div>
+          <div class="host-actions">
+            <button id="host-add" class="button secondary" type="button">+ Add chips</button>
+            <button id="host-remove" class="button ghost" type="button">− Remove chips</button>
+            <button id="host-next-round" class="button ghost" type="button">Next betting round</button>
+          </div>
+        </div>
+
+        <div class="host-section showdown-section">
+          <div class="subheading-row">
+            <div>
+              <h3>Showdown & side pots</h3>
+              <p class="microcopy">Enter finishing place for players still in the hand. Use the same number for a tie. Example: two players marked <strong>1</strong> split any pot they are both eligible to win.</p>
+            </div>
+          </div>
+          <div id="side-pots-preview" class="side-pots-preview"></div>
+          <div id="showdown-ranks" class="showdown-ranks"></div>
+          <div class="host-actions showdown-actions">
+            <button id="host-settle" class="button primary" type="button">Settle pots from places</button>
+            <button id="host-next-hand" class="button ghost" type="button">Start next hand</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card activity-card">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">ACTIVITY</p>
+            <h2>Recent actions</h2>
+          </div>
+        </div>
+        <ol id="activity-list" class="activity-list"></ol>
+      </section>
+    </section>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

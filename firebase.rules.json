@@ -1,0 +1,13 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rooms": {
+      "$roomCode": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['hostId', 'createdAt', 'startingStack', 'pot', 'handNumber', 'players']) && newData.child('hostId').isString() && newData.child('startingStack').isNumber() && newData.child('startingStack').val() > 0 && newData.child('pot').isNumber() && newData.child('pot').val() >= 0 && newData.child('handNumber').isNumber() && newData.child('handNumber').val() >= 1"
+      }
+    }
+  }
+}

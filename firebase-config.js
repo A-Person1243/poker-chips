@@ -2,11 +2,11 @@
 // Firebase Console -> Project settings -> Your apps -> Web app -> SDK setup and configuration
 // This object is safe to include in a browser app. Security comes from Firebase Authentication + database rules.
 export const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://PASTE_YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "PASTE_YOUR_PROJECT",
-  storageBucket: "PASTE_YOUR_PROJECT.firebasestorage.app",
-  messagingSenderId: "PASTE_YOUR_SENDER_ID",
-  appId: "PASTE_YOUR_APP_ID"
+  apiKey: "AIzaSyAZjwy4VwdMTEyvJhRoBiYMjFRKR8pRNpU",
+  authDomain: "poker-chips-6d732.firebaseapp.com",
+  databaseURL: "https://poker-chips-6d732-default-rtdb.firebaseio.com",
+  projectId: "poker-chips-6d732",
+  storageBucket: "poker-chips-6d732.firebasestorage.app",
+  messagingSenderId: "766309706828",
+  appId: "1:766309706828:web:9a27d30e7dd5177f0798e9"
 };
